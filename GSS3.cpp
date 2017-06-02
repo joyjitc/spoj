@@ -1,0 +1,79 @@
+#include <iostream>
+#include <limits>
+using namespace std;
+
+class S{
+public:
+	int best;
+	int maxLeft;
+	int maxRight;
+	int total;
+};
+
+int n;
+S data[100000];
+
+S combine(S L, S R){
+	if(L.best == numeric_limits<int>::min()) return R;
+	if(R.best == numeric_limits<int>::min()) return L;
+	S X;
+	X.total=L.total+R.total;
+	X.best=max(max(L.best,R.best),L.maxRight+R.maxLeft);
+	X.maxLeft=max(L.total+R.maxLeft,L.maxLeft);
+	X.maxRight=max(R.total+L.maxRight,R.maxRight);
+	return X;
+}
+
+void build(){
+	for(int i=n-1;i>0;--i) data[i]=combine(data[i<<1],data[i<<1|1]);
+}
+
+S query(int l,int r){
+	S resl,resr;
+	resl.best=resr.best=resl.maxLeft=resr.maxLeft=resl.maxRight=resr.maxRight=numeric_limits<int>::min();
+	resl.total=resr.total=0;
+	for(l+=n,r+=n;l<r;l>>=1,r>>=1){
+		if(l&1) resl=combine(resl,data[l++]);
+		if(r&1)	resr=combine(data[--r],resr);
+	}
+	return combine(resl,resr);
+}
+void modify(int x,int y){
+	x--; x+=n;
+	data[x].best=y;
+	data[x].total = y;
+	data[x].maxRight = y;
+	data[x].maxLeft = y;
+	while(x>1){
+		x>>=1;
+		data[x]=combine(data[x<<1],data[x<<1|1]);
+	}
+}
+
+int main(){
+	scanf("%d",&n);
+	int inp;
+	for(int i=0;i<n;i++){
+		scanf("%d",&inp);
+		data[i+n].best = inp;
+		data[i+n].total = inp;
+		data[i+n].maxRight = inp;
+		data[i+n].maxLeft = inp;
+	}
+	build();
+	int m;
+	scanf("%d",&m);
+	int type,x,y;
+	while(m--){
+		scanf("%d",&type);
+		if(type){
+			scanf("%d %d",&x,&y);
+	 		S ans = query(--x,y); 
+ 			printf("%d\n",ans.best);
+		}
+		else{
+			scanf("%d %d",&x,&y);
+			modify(x,y);
+		} 	
+ 	}
+}
