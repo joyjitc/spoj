@@ -9,7 +9,7 @@ int main(){
 	int status;//Detection -1 error 0 undefined 1 C++ 2 Java
 	
 
-	while(getline(cin,input)){
+	while(cin>>input){
 		vector<string> s;
 		status = 0;
 		if(input[0]=='_'||isupper(input[0])||isdigit(input[0])){
@@ -21,7 +21,7 @@ int main(){
 			if(isalnum(input[i])&&islower(input[i]))
 				cur.push_back(input[i]);
 			else if(input[i]=='_'){
-				if(status==2){
+				if(status==2||i==input.size()-1||input[i+1]=='_'){
 					status=-1;
 					break;
 				}
@@ -44,6 +44,7 @@ int main(){
 				break;
 			}
 		}
+		// if(input[input.size()-1]=='_') status = -1;
 		if(status==-1){
 			cout<<"Error!\n";
 			continue;
