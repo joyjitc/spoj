@@ -21,6 +21,7 @@ int main(){
 		sort(v.begin(),v.end());
 		ans = 0;
 		int y;
+
 		int i;
 		for(int x=0;x<v.size()-1;x++){
 			y=x+1;
